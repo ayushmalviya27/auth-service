@@ -2,7 +2,6 @@ const UserRepository = require('../repository/user-repository');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { JWT_KEY } = require('../config/serverConfig');
-const AppError = require('../utils/error-handler');
 
 class UserService {
     constructor() {
@@ -34,6 +33,9 @@ class UserService {
             const newJWT = this.createToken({email: user.email, id: user.id});
             return newJWT;
         } catch (error) {
+            if(error.name === 'SequelizeValidationError') {
+                throw error;
+            }
             console.log('Something went wrong in the sign in process');
             throw error;
         }
